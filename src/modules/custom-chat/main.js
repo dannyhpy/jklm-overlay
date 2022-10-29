@@ -40,10 +40,16 @@ module.exports.main = async function main () {
     }
   })
 
-  await listenToSocketEvents(chat, chatInput)
-
   if (!normalChatPane.hidden) {
     normalChatPane.hidden = true
     customChatPane.hidden = false
   }
+
+  unsafeWindow.addEventListener('message', (event) => {
+    if (event.data.name !== 'focusChat') return
+    event.stopPropagation()
+    chatInput.focus()
+  }, false)
+
+  await listenToSocketEvents(chat, chatInput)
 }

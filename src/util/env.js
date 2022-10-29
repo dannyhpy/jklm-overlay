@@ -1,7 +1,7 @@
 const env = {}
 
 const waitForSocketPromise = new Promise(async (resolve, reject) => {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 300; i++) {
     if (
       typeof socket !== 'undefined'
       && socket != null

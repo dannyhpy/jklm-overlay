@@ -173,6 +173,10 @@ class ChatInput extends HTMLElement {
     }
   }
 
+  focus () {
+    this.#textarea.focus()
+  }
+
   submit () {
     this.dispatchEvent(new CustomEvent('submit', {
       detail: { value: this.#textarea.value }
