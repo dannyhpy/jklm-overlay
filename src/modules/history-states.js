@@ -2,48 +2,60 @@ const env = require('../util/env')
 
 module.exports.main = async function main () {
   if (env.jklm.isHomepage()) {
-    const homePageEl = document.querySelector('.page.home')
-    const authPageEl = document.querySelector('.page.auth')
-    const authButtonEl = document.querySelector('button.auth')
-
-    window.addEventListener('popstate', (e) => {
-      authPageEl.hidden = e.state?.page !== 'auth'
-      homePageEl.hidden = e.state?.page === 'auth'
-    })
-
-
-    authButtonEl.addEventListener('click', function () {
-      if (authPageEl.hidden) {
-        history.pushState({ page: 'auth' }, '')
-      }
-    })
-  } else if (env.jklm.isRoom()) {
-    const chatPaneEl = document.querySelector('.pane.chat')
-    const roomPaneEl = document.querySelector('.pane.room')
-    const userProfilePaneEl = document.querySelector('.pane.userProfile')
-
-    const chatTabEl = document.querySelector('.tabs .chat')
-    const roomTabEl = document.querySelector('.tabs .room')
-
-    const onClick = function () {
-      history.pushState({
-        pane: this === roomTabEl ? 'room' : 'chat'
-      }, '')
+    const loadingPage = document.querySelector('.page.loading')
+    while (!loadingPage.hidden) {
+      await new Promise(resolve => setTimeout(resolve, 200))
     }
 
-    window.addEventListener('popstate', (e) => {
-      chatPaneEl.hidden = e.state?.pane === 'room'
-      roomPaneEl.hidden = e.state?.pane !== 'room'
-      userProfilePaneEl.hidden = true
+    const pages = document.querySelectorAll('.page')
+
+    function onHashChange () {
+      const pageName = location.hash.slice(1)
+      if (pageName === '') return
+
+      for (const page of pages) {
+        if (page.classList.contains(pageName)) {
+          page.hidden = false
+        } else {
+          page.hidden = true
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', onHashChange)
+    onHashChange()
+
+    const authButton = document.querySelector('button.auth')
+    authButton.addEventListener('click', function () {
+      location.hash = '#auth'
     })
 
-    chatTabEl.addEventListener('click', onClick)
-    roomTabEl.addEventListener('click', onClick)
+    const homeButton = document.querySelector('.top > h1 > a[href="/"]')
+    homeButton.addEventListener('click', function (event) {
+      if (!['', '#home'].includes(location.hash)) {
+        event.preventDefault()
+        location.hash = '#home'
+      }
+    })
 
-    /*
+    const setNicknameButton = document.querySelector('.page.auth form.setNickname button')
+    setNicknameButton.addEventListener('click', function () {
+      location.hash = '#home'
+    })
+  } else if (env.jklm.isRoom()) {
+    let userPressedLeaveRoomButton = false
+
+    const leaveRoomButton = document.querySelector('.leaveRoom')
+    leaveRoomButton.addEventListener('click', function () {
+      userPressedLeaveRoomButton = true
+      // In case the user does not want to leave the room in the end
+      setTimeout(() => { userPressedLeaveRoomButton = false }, 1000)
+    })
+
     window.addEventListener('beforeunload', (e) => {
-      return e.returnValue = 'You\'re about to exit the room.'
+      if (!userPressedLeaveRoomButton) {
+        return e.returnValue = 'You\'re about to exit the room.'
+      }
     })
-    */
   }
 }

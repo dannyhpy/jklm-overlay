@@ -8,7 +8,7 @@
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_addStyle
-// @version     0.1.4
+// @version     0.1.5
 // @author      dannyhpy
 // @description dannyhpy's JKLM.FUN Overlay
 // ==/UserScript==
