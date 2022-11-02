@@ -8,7 +8,6 @@ module.exports.main = async function main () {
   GM_addStyle(`
     :root {
       --primary-background-color: #c16525 !important;
-      --secondary-background-color: #445061;
 
       --primary-color: #fff !important;
 
